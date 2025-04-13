@@ -230,33 +230,47 @@ class _InvitePeople extends State<InvitePeople> {
         ),
         backgroundColor: Colors.green,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+      body: Padding(
+          padding: EdgeInsets.all(32),
+          child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
               "Invite your friends!",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
             const Text(
               "Finfig is more fun with friends. Make great purchasing decisions together!",
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w400),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
             ),
+            const SizedBox(height: 8),
             TextField(
               controller: _justificationController,
               decoration: const InputDecoration(
                 labelText: 'Email',
                 border: OutlineInputBorder(),
               ),
-              maxLines: 3,
-            ),
-            const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: _invitePerson,
-              child: const Text("Submit"),
+              maxLines: 1,
             ),
             const SizedBox(height: 24),
+            ElevatedButton.icon(
+              style: ButtonStyle(
+                padding: WidgetStatePropertyAll(EdgeInsets.all(20)),
+                shape: WidgetStatePropertyAll(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                  ), 
+                ),
+                backgroundColor: WidgetStatePropertyAll(Colors.red)
+                ),
+              icon: Icon(Icons.email_sharp, size: 36),
+              label: Text(
+                "Send Email",
+                style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black)
+                ),
+              onPressed: _invitePerson,
+            ),
           ],
         ),
       ),
