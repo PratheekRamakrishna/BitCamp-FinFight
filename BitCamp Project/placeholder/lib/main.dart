@@ -122,13 +122,21 @@ class _MyLeaderboard extends State<MyLeaderboard> {
     return DefaultTabController(length: 3, child: 
             Scaffold(
               appBar: AppBar(
-                bottom: const TabBar(
-                  tabs: [
-                    Tab(icon: Icon(Icons.savings_rounded)),
-                    Tab(icon: Icon(Icons.smoke_free)),
-                    Tab(icon: Icon(Icons.lightbulb))
-                  ],
-                ),
+                leading: IconButton(onPressed: () {}, icon: Icon(Icons.arrow_back_sharp)),
+                backgroundColor: Colors.green,
+                title: Center(child: Text("Leaderboards")),
+                actions: [
+                  IconButton(onPressed: () {}, icon: Icon(Icons.help)),
+                ],
+              ),
+              bottomNavigationBar: const TabBar(
+                padding: EdgeInsets.only(bottom: 30),
+                indicatorSize: TabBarIndicatorSize.tab,
+                tabs: [
+                  Tab(icon: Icon(Icons.savings_rounded)),
+                  Tab(icon: Icon(Icons.smoke_free)),
+                  Tab(icon: Icon(Icons.lightbulb))
+                ],
               ),
             ),
           );
