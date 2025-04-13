@@ -1,6 +1,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -52,11 +53,25 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Icon(Icons.monetization_on),
         title: Center(
           child: Text(widget.title, 
-            style: Theme.of(context).textTheme.displaySmall!.copyWith(color: Colors.black)),
+            style: GoogleFonts.merriweatherSans(
+              textStyle: TextStyle(
+                fontSize: 30,
+              ),
+            ),
+          ),
         ),
         backgroundColor: Colors.green,
+        actions: [
+          IconButton(onPressed: () {
+            Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Tutorial())
+            );
+          }, icon: Icon(Icons.help)),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(8.0),
@@ -205,6 +220,8 @@ class JustifyTransition extends StatelessWidget {
 }
 
 class InvitePeople extends StatefulWidget {
+  const InvitePeople({super.key});
+
   @override
   State<InvitePeople> createState() => _InvitePeople();
 }
@@ -224,9 +241,18 @@ class _InvitePeople extends State<InvitePeople> {
   Widget build(BuildContext build) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(onPressed: () {
+            Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Tutorial())
+            );
+          }, icon: Icon(Icons.help)),
+        ],
         title: Center(
           child: Text("Justify Purchases", 
             style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black)),
+            
         ),
         backgroundColor: Colors.green,
       ),
@@ -279,6 +305,8 @@ class _InvitePeople extends State<InvitePeople> {
 }
 
 class MyLeaderboard extends StatefulWidget {
+  const MyLeaderboard({super.key});
+
   @override
   State<MyLeaderboard> createState() => _MyLeaderboard();
 }
@@ -289,13 +317,19 @@ class _MyLeaderboard extends State<MyLeaderboard> {
     return DefaultTabController(length: 3, child: 
             Scaffold(
               appBar: AppBar(
+                
                 leading: IconButton(onPressed: () {
                   Navigator.pop(context);
                 }, icon: Icon(Icons.arrow_back_sharp)),
                 backgroundColor: Colors.green,
                 title: Center(child: Text("Leaderboards")),
                 actions: [
-                  IconButton(onPressed: () {}, icon: Icon(Icons.help)),
+                  IconButton(onPressed: () {
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Tutorial())
+                    );
+                  }, icon: Icon(Icons.help)),
                 ],
               ),
               bottomNavigationBar: const TabBar(
@@ -313,6 +347,8 @@ class _MyLeaderboard extends State<MyLeaderboard> {
 }
 
 class JustifyPurchase extends StatefulWidget {
+  const JustifyPurchase({super.key});
+
   @override
   State<JustifyPurchase> createState() => _JustifyPurchase();
 }
@@ -339,6 +375,14 @@ class _JustifyPurchase extends State<JustifyPurchase> {
             style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black)),
         ),
         backgroundColor: Colors.green,
+        actions: [
+          IconButton(onPressed: () {
+            Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Tutorial())
+            );
+          }, icon: Icon(Icons.help)),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -369,3 +413,121 @@ class _JustifyPurchase extends State<JustifyPurchase> {
     );
   }
 }
+
+class Tutorial extends StatefulWidget {
+  const Tutorial ({super.key});
+
+  @override
+  State<Tutorial> createState() => _Tutorial();
+}
+
+class _Tutorial extends State<Tutorial> {
+
+  @override
+  Widget build(BuildContext build) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Center(
+            child: Text("FinFig", 
+              style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black)),
+            )
+          ),
+          body: Padding(
+          padding: EdgeInsets.all(32),
+          
+          child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Center(
+              child: Text("Welcome to Finfig!",
+                style: GoogleFonts.merriweatherSans(
+                  textStyle: TextStyle(
+                    fontSize: 30
+                  )
+                ),
+              )
+            ),
+            const SizedBox(height: 8),
+            Text("Short for Financial Fighter, we help you and your friends "
+              "compete to make better purchases without revealing financial details.",
+                style: GoogleFonts.merriweatherSans(
+                  textStyle: TextStyle(
+                    fontSize: 14
+                  )
+                ),
+            ),
+            const SizedBox(height: 8),
+            Text("We upload your transactions to an AI using Capital One's API, which makes you justify them and submit receipts."
+                "This gives you an opportunity to reflect on your purchase history and cut on impulsive purchases.",
+                style: GoogleFonts.merriweatherSans(
+                  textStyle: TextStyle(
+                    fontSize: 14
+                  )
+                ),
+            ),
+            const SizedBox(height: 8),
+            Text("There are three different categories you can compete with your friends in every week! ",
+                style: GoogleFonts.merriweatherSans(
+                  textStyle: TextStyle(
+                    fontSize: 14
+                  )
+                ),
+            ),
+            const SizedBox(height: 16),
+            ListTile(
+              leading: Icon(Icons.savings_rounded),
+              title: Text("Make the fewest frivolous purchases for the week.",
+                style: GoogleFonts.merriweatherSans(
+                  textStyle: TextStyle(
+                    fontSize: 16
+                  )
+                ),
+             ),
+            ),
+            const SizedBox(height: 16),
+            ListTile(
+              leading: Icon(Icons.smoke_free_sharp),
+              title: Text("Reduce your carbon emissions! The products you purchase all leave a carbon footprint.",
+                style: GoogleFonts.merriweatherSans(
+                  textStyle: TextStyle(
+                    fontSize: 16
+                  )
+                ),
+             ),
+            ),
+            const SizedBox(height: 16),
+            ListTile(
+              leading: Icon(Icons.lightbulb_sharp),
+              title: Text("Beat the price of Walmart with your purchases! Can you make the best deals?",
+                style: GoogleFonts.merriweatherSans(
+                  textStyle: TextStyle(
+                    fontSize: 16
+                  )
+                ),
+             ),
+            ),
+            const SizedBox(height: 16),
+            Text("So keep your receipts handy! Make fun of your friends! Let's play...",
+                style: GoogleFonts.merriweatherSans(
+                  textStyle: TextStyle(
+                    fontSize: 16
+                  )
+                ),
+            ),
+            const SizedBox(height: 8),
+          Center(
+            child: Text("Finfig!",
+                style: GoogleFonts.merriweatherSans(
+                  textStyle: TextStyle(
+                    fontSize: 30
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
