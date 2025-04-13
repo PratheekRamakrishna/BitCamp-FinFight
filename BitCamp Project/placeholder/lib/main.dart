@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:io'; // For File class
 void main() {
   runApp(const MyApp());
@@ -355,10 +354,12 @@ class _JustifyPurchaseState extends State<JustifyPurchase> {
               Table(
                 border: TableBorder.all(),
                 columnWidths: const {
-                  0: FixedColumnWidth(100),
+                  0: FixedColumnWidth(60),
                   1: FlexColumnWidth(),
                   2: FixedColumnWidth(80),
-                  3: FixedColumnWidth(100), // For the justification button
+                  3: FlexColumnWidth(), 
+                  4: FixedColumnWidth(80), 
+
                 },
                 children: [
                   const TableRow(
@@ -383,6 +384,11 @@ class _JustifyPurchaseState extends State<JustifyPurchase> {
                           child: Padding(
                               padding: EdgeInsets.all(8.0),
                               child: Text('Justify',
+                                  style: TextStyle(fontWeight: FontWeight.bold)))),
+                       TableCell(
+                          child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text('Receipt',
                                   style: TextStyle(fontWeight: FontWeight.bold)))),
                     ],
                   ),
@@ -411,6 +417,11 @@ class _JustifyPurchaseState extends State<JustifyPurchase> {
                             ),
                           ),
                         ),
+                         TableCell(
+                          child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text("[placeholder]")),),
+                         
                       ],
                     ),
                 ],
