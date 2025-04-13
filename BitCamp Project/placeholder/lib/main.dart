@@ -69,7 +69,8 @@ class _MyHomePageState extends State<MyHomePage> {
             ..._leaderboard.map((entry) => ListTile(
               leading: const Icon(Icons.emoji_events),
               title: Text(entry['name']),
-              trailing: Text('\$${entry['savings']}'),
+              trailing: Text('${entry['Points']} pts'),
+
             )),
             const SizedBox(height: 24),
             const Text(
