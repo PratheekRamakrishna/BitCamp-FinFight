@@ -420,7 +420,7 @@ class _JustifyPurchaseState extends State<JustifyPurchase> {
                          TableCell(
                           child: Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text("[placeholder]")),),
+                                child: Text("Take picture")),),
                          
                       ],
                     ),
