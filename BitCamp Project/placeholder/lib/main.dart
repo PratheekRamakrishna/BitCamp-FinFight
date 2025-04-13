@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 
 void main() {
@@ -15,16 +17,14 @@ class _MyAppState extends State<MyApp> {
   var selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: MaterialApp(
+    return MaterialApp(
         title: 'FinFight',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
           useMaterial3: true,
          ),
-        home: MyLeaderboard(),
-      ),
-    );
+        home: MyHomePage(title: 'FinFig!'),
+      );
   }
 }
 
@@ -37,50 +37,48 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   final List<Map<String, dynamic>> _leaderboard = [
-    {'name': 'Dave', 'Points': 500},
-    {'name': 'Eve', 'Points': 400},
-    {'name': 'Frank', 'Points': 300},
-    {'name': 'Grace', 'Points': 200},
-    {'name': 'Heidi', 'Points': 100},
-    {'name': 'Ivan', 'Points': 50},
+    {'name': 'Dave'},
+    {'name': 'Eve'},
+    {'name': 'Frank'},
+    {'name': 'Grace'},
+    {'name': 'Heidi'},
+    {'name': 'Ivan'},
   ];
-  final TextEditingController _justificationController = TextEditingController();
+  
 
-
-  void _submitJustification() {
-    String reason = _justificationController.text;
-    if (reason.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Submitted: $reason")),
-      );
-      _justificationController.clear();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: Center(
+          child: Text(widget.title, 
+            style: Theme.of(context).textTheme.displaySmall!.copyWith(color: Colors.black)),
+        ),
+        backgroundColor: Colors.green,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
             const Text(
-              "Leaderboard",
+              "Friends",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             ..._leaderboard.map((entry) => ListTile(
-              leading: const Icon(Icons.emoji_events),
-              title: Text(entry['name']),
-              trailing: Text('\$${entry['savings']}'),
+              leading: const Icon(Icons.person),
+              title: Text(entry['name'], style: TextStyle(
+                fontSize: 20
+              )),
             )),
             const SizedBox(height: 24),
-            const Text(
+            InviteTransition(),
+            const SizedBox(height: 24),
+            LeaderboardTransition(),
+            const SizedBox(height: 24),
+            JustifyTransition(),
+            /*const Text(
               "Justify Your Expense 🧾",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
@@ -102,11 +100,166 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               'Your score: $_counter',
               style: Theme.of(context).textTheme.headlineMedium,
-            ),
+            ),*/
           ],
         ),
       ),
-      
+    );
+  }
+}
+
+class InviteTransition extends StatelessWidget {
+  const InviteTransition({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      style: ButtonStyle(
+        padding: WidgetStatePropertyAll(EdgeInsets.all(20)),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero,
+          ), 
+        ),
+        backgroundColor: WidgetStatePropertyAll(Colors.blue)
+        ),
+      icon: Icon(Icons.add, size: 36),
+      label: Text(
+        "Invite your Friends",
+        style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black)
+        ),
+      onPressed: () {
+        Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => InvitePeople())
+        );
+      },
+    );
+  }
+}
+
+class LeaderboardTransition extends StatelessWidget {
+  const LeaderboardTransition({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      style: ButtonStyle(
+        padding: WidgetStatePropertyAll(EdgeInsets.all(20)),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero,
+          ), 
+        ),
+        backgroundColor: WidgetStatePropertyAll(Colors.yellow)
+        ),
+      icon: Icon(Icons.emoji_events, size: 36),
+      label: Text(
+        "See Leaderboards",
+        style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black)
+        ),
+      onPressed: () {
+        Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MyLeaderboard())
+        );
+      },
+    );
+  }
+}
+
+class JustifyTransition extends StatelessWidget {
+  const JustifyTransition({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      style: ButtonStyle(
+        padding: WidgetStatePropertyAll(EdgeInsets.all(20)),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero,
+          ), 
+        ),
+        backgroundColor: WidgetStatePropertyAll(Colors.lightGreen)
+        ),
+      icon: Icon(Icons.edit_note, size: 36),
+      label: Text(
+        "Justify Purchases",
+        style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black)
+        ),
+      onPressed: () {
+        Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => JustifyPurchase())
+        );
+      },
+    );
+  }
+}
+
+class InvitePeople extends StatefulWidget {
+  @override
+  State<InvitePeople> createState() => _InvitePeople();
+}
+
+class _InvitePeople extends State<InvitePeople> {
+  void _invitePerson() {
+    String reason = _justificationController.text;
+    if (reason.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Invited: $reason")),
+      );
+      _justificationController.clear();
+    }
+  }
+
+  @override
+  Widget build(BuildContext build) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Center(
+          child: Text("Justify Purchases", 
+            style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black)),
+        ),
+        backgroundColor: Colors.green,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            const Text(
+              "Invite your friends!",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              "Finfig is more fun with friends. Make great purchasing decisions together!",
+              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w400),
+            ),
+            TextField(
+              controller: _justificationController,
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 3,
+            ),
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: _invitePerson,
+              child: const Text("Submit"),
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -122,7 +275,9 @@ class _MyLeaderboard extends State<MyLeaderboard> {
     return DefaultTabController(length: 3, child: 
             Scaffold(
               appBar: AppBar(
-                leading: IconButton(onPressed: () {}, icon: Icon(Icons.arrow_back_sharp)),
+                leading: IconButton(onPressed: () {
+                  Navigator.pop(context);
+                }, icon: Icon(Icons.arrow_back_sharp)),
                 backgroundColor: Colors.green,
                 title: Center(child: Text("Leaderboards")),
                 actions: [
@@ -140,5 +295,63 @@ class _MyLeaderboard extends State<MyLeaderboard> {
               ),
             ),
           );
+  }
+}
+
+class JustifyPurchase extends StatefulWidget {
+  @override
+  State<JustifyPurchase> createState() => _JustifyPurchase();
+}
+
+final TextEditingController _justificationController = TextEditingController();
+
+class _JustifyPurchase extends State<JustifyPurchase> {
+  void _submitJustification() {
+    String reason = _justificationController.text;
+    if (reason.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Submitted: $reason")),
+      );
+      _justificationController.clear();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Center(
+          child: Text("Justify Purchases", 
+            style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black)),
+        ),
+        backgroundColor: Colors.green,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            const Text(
+              "Justify Your Expense 🧾",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _justificationController,
+              decoration: const InputDecoration(
+                labelText: 'Why did you spend this money?',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 3,
+            ),
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: _submitJustification,
+              child: const Text("Submit"),
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
+      ),
+    );
   }
 }
