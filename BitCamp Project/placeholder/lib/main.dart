@@ -350,9 +350,9 @@ class _MyLeaderboard extends State<MyLeaderboard> {
                 padding: EdgeInsets.only(bottom: 30),
                 indicatorSize: TabBarIndicatorSize.tab,
                 tabs: [
-                  Tab(icon: Icon(Icons.savings_rounded)),
-                  Tab(icon: Icon(Icons.smoke_free)),
-                  Tab(icon: Icon(Icons.lightbulb))
+                  Tab(icon: Icon(Icons.savings_sharp)),
+                  Tab(icon: Icon(Icons.smoke_free_sharp)),
+                  Tab(icon: Icon(Icons.lightbulb_sharp))
                 ],
               ),
             ),
@@ -370,57 +370,160 @@ class JustifyPurchase extends StatefulWidget {
 final TextEditingController _justificationController = TextEditingController();
 
 class _JustifyPurchase extends State<JustifyPurchase> {
-  void _submitJustification() {
-    String reason = _justificationController.text;
-    if (reason.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Submitted: $reason")),
-      );
-      _justificationController.clear();
-    }
+  final List<Map<String, dynamic>> _transactionData = [
+    {'date': '2025-04-01', 'vendor': 'Amazon', 'price': 45.99},
+    {'date': '2025-04-01', 'vendor': 'Local Grocer', 'price': 12.50},
+    {'date': '2025-04-02', 'vendor': 'Target', 'price': 78.20},
+    {'date': '2025-04-03', 'vendor': 'Etsy', 'price': 25.00},
+   
+  ];
+
+  final List<Map<String, dynamic>> _justifiedTransactions = [];
+
+  void _showJustificationDialog(int index) {
+    TextEditingController justificationController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Add Justification'),
+          content: TextField(
+            controller: justificationController,
+            maxLines: 3,
+            decoration: const InputDecoration(
+              labelText: 'Why was this purchase made?',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Save'),
+              onPressed: () {
+                if (justificationController.text.isNotEmpty) {
+                  setState(() {
+                    _justifiedTransactions.add(_transactionData[index]);
+                    _transactionData.removeAt(index);
+                  });
+                }
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    ).then((_) {
+      // Rebuild the UI after the dialog is closed, in case the list changed
+      setState(() {});
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(
-          child: Text("Justify Purchases", 
-            style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black)),
-        ),
+        title: const Center(child: Text("Justify Purchases")),
         backgroundColor: Colors.green,
-        actions: [
-          IconButton(onPressed: () {
-            Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => Tutorial())
-            );
-          }, icon: Icon(Icons.help)),
-        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             const Text(
-              "Justify Your Expense 🧾",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+              "Transaction History",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _justificationController,
-              decoration: const InputDecoration(
-                labelText: 'Why did you spend this money?',
-                border: OutlineInputBorder(),
+            const SizedBox(height: 16),
+            if (_transactionData.isNotEmpty)
+              Table(
+                border: TableBorder.all(),
+                columnWidths: const {
+                  0: FixedColumnWidth(60),
+                  1: FlexColumnWidth(),
+                  2: FixedColumnWidth(80),
+                  3: FlexColumnWidth(), 
+                  4: FixedColumnWidth(80), 
+
+                },
+                children: [
+                  const TableRow(
+                    decoration: BoxDecoration(color: Colors.grey),
+                    children: [
+                      TableCell(
+                          child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text('Date',
+                                  style: TextStyle(fontWeight: FontWeight.bold)))),
+                      TableCell(
+                          child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text('Vendor',
+                                  style: TextStyle(fontWeight: FontWeight.bold)))),
+                      TableCell(
+                          child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text('Price',
+                                  style: TextStyle(fontWeight: FontWeight.bold)))),
+                      TableCell(
+                          child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text('Justify',
+                                  style: TextStyle(fontWeight: FontWeight.bold)))),
+                       TableCell(
+                          child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text('Receipt',
+                                  style: TextStyle(fontWeight: FontWeight.bold)))),
+                    ],
+                  ),
+                  for (int i = 0; i < _transactionData.length; i++)
+                    TableRow(
+                      key: ValueKey(_transactionData[i]), // Important for correct state management
+                      children: [
+                        TableCell(
+                            child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(_transactionData[i]['date']))),
+                        TableCell(
+                            child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(_transactionData[i]['vendor']))),
+                        TableCell(
+                            child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                    '\$${(_transactionData[i]['price'] as num).toStringAsFixed(2)}'))),
+                        TableCell(
+                          child: Center(
+                            child: TextButton(
+                              onPressed: () => _showJustificationDialog(i),
+                              child: const Text('Add'),
+                            ),
+                          ),
+                        ),
+                         TableCell(
+                          child: ElevatedButton.icon(
+                                icon: Icon(Icons.photo_camera_sharp),
+                                label: Text(""),
+                                onPressed: () {},
+                              )
+                         ),
+                         
+                      ],
+                    ),
+                ],
+              )
+            else
+              const Padding(
+                padding: EdgeInsets.only(top: 8.0),
+                child: Text("No transactions left to justify."),
               ),
-              maxLines: 3,
-            ),
-            const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: _submitJustification,
-              child: const Text("Submit"),
-            ),
-            const SizedBox(height: 24),
+            
           ],
         ),
       ),
@@ -489,7 +592,7 @@ class _Tutorial extends State<Tutorial> {
             ),
             const SizedBox(height: 16),
             ListTile(
-              leading: Icon(Icons.savings_rounded),
+              leading: Icon(Icons.savings_sharp),
               title: Text("Make the fewest frivolous purchases for the week.",
                 style: GoogleFonts.merriweatherSans(
                   textStyle: TextStyle(
