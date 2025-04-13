@@ -4,18 +4,26 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  var selectedIndex = 0;
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'FinFight',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-        useMaterial3: true,
+    return GestureDetector(
+      child: MaterialApp(
+        title: 'FinFight',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+          useMaterial3: true,
+         ),
+        home: MyLeaderboard(),
       ),
-      home: const MyHomePage(title: 'FinFight! 💰'),
     );
   }
 }
@@ -100,5 +108,29 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       
     );
+  }
+}
+
+class MyLeaderboard extends StatefulWidget {
+  @override
+  State<MyLeaderboard> createState() => _MyLeaderboard();
+}
+
+class _MyLeaderboard extends State<MyLeaderboard> {
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(length: 3, child: 
+            Scaffold(
+              appBar: AppBar(
+                bottom: const TabBar(
+                  tabs: [
+                    Tab(icon: Icon(Icons.savings_rounded)),
+                    Tab(icon: Icon(Icons.smoke_free)),
+                    Tab(icon: Icon(Icons.lightbulb))
+                  ],
+                ),
+              ),
+            ),
+          );
   }
 }
