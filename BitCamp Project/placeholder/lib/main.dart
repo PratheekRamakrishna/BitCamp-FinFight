@@ -4,141 +4,154 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
+// Main application widget (Stateless as it only sets up theme and home)
+class MyApp extends StatelessWidget { // Changed to StatelessWidget as state was unused
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  var selectedIndex = 0;
-  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: MaterialApp(
-        title: 'FinFight',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-          useMaterial3: true,
-         ),
-        home: MyLeaderboard(),
+    // Removed the unused GestureDetector
+    return MaterialApp(
+      title: 'FinFight',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+        useMaterial3: true,
       ),
+      // Set MyLeaderboard directly as the home screen
+      home: const MyLeaderboard(), // Added const
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
+// --- MyHomePage and _MyHomePageState have been removed as they were unused ---
+
+
+// Leaderboard screen widget
+class MyLeaderboard extends StatefulWidget {
+  // Added standard const constructor
+  const MyLeaderboard({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  // Renamed State class to follow convention
+  State<MyLeaderboard> createState() => _MyLeaderboardState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  final List<Map<String, dynamic>> _leaderboard = [
-    {'name': 'Dave', 'Points': 500},
-    {'name': 'Eve', 'Points': 400},
-    {'name': 'Frank', 'Points': 300},
-    {'name': 'Grace', 'Points': 200},
-    {'name': 'Heidi', 'Points': 100},
-    {'name': 'Ivan', 'Points': 50},
+// State for the Leaderboard screen
+class _MyLeaderboardState extends State<MyLeaderboard> {
+  // Leaderboard data remains the same
+  final List<Map<String, dynamic>> co2Leaderboard = [
+    {'name': 'Sena', 'co2Cost': 50}, // Key is 'co2Cost'
+    {'name': 'Scott', 'co2Cost': 100},
+    {'name': 'Lupita', 'co2Cost': 90},
   ];
-  final TextEditingController _justificationController = TextEditingController();
 
+  final List<Map<String, dynamic>> pointsLeaderboard = [
+    {'name': 'Sena', 'points': 100},
+    {'name': 'Scott', 'points': 400},
+    {'name': 'Lupita', 'points': 300},
+  ];
 
-  void _submitJustification() {
-    String reason = _justificationController.text;
-    if (reason.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Submitted: $reason")),
-      );
-      _justificationController.clear();
-    }
-  }
+  final List<Map<String, dynamic>> costEffectiveLeaderboard = [
+    {'name': 'Sena', 'ratio': 10.5},
+    {'name': 'Scott', 'ratio': 9.2},
+    {'name': 'Lupita', 'ratio': 8.8},
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+    // DefaultTabController provides the controller for TabBar and TabBarView
+    return DefaultTabController(
+      length: 3, // Number of tabs
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              // TODO: Implement back navigation if needed
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              }
+            },
+            icon: const Icon(Icons.arrow_back_sharp),
+          ),
+          backgroundColor: Colors.green,
+          title: const Center(child: Text("Leaderboards")), // Added const
+          actions: [
+            IconButton(
+              onPressed: () {
+                // TODO: Implement help action
+              },
+              icon: const Icon(Icons.help),
+            ), // Added const
+          ],
+          // Removed bottom property as TabBar is now in bottomNavigationBar
+        ),
+        // Place TabBar in bottomNavigationBar for conventional placement
+        bottomNavigationBar: const TabBar(
+          padding: EdgeInsets.only(bottom: 20, top: 10), // Adjusted padding
+          indicatorSize: TabBarIndicatorSize.tab,
+          tabs: [
+            Tab(icon: Icon(Icons.savings_rounded)), // Points/Savings
+            Tab(icon: Icon(Icons.eco)), // Changed icon to better match CO2
+            Tab(icon: Icon(Icons.lightbulb)), // Cost Effectiveness
+          ],
+        ),
+        body: TabBarView(
+          // Removed the explicit controller, it uses DefaultTabController's controller
           children: [
-            const Text(
-              "Leaderboard",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            ..._leaderboard.map((entry) => ListTile(
-              leading: const Icon(Icons.emoji_events),
-              title: Text(entry['name']),
-              trailing: Text('\$${entry['savings']}'),
-            )),
-            const SizedBox(height: 24),
-            const Text(
-              "Justify Your Expense 🧾",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _justificationController,
-              decoration: const InputDecoration(
-                labelText: 'Why did you spend this money?',
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 3,
-            ),
-            const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: _submitJustification,
-              child: const Text("Submit"),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Your score: $_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+            _buildPointsTable(), // First tab content
+            _buildCO2Table(), // Second tab content
+            _buildCostEffectiveTable(), // Third tab content
           ],
         ),
       ),
-      
     );
   }
-}
 
-class MyLeaderboard extends StatefulWidget {
-  @override
-  State<MyLeaderboard> createState() => _MyLeaderboard();
-}
+  // Helper method to build the Points leaderboard table
+  Widget _buildPointsTable() {
+    // Sort in descending order (highest points first)
+    pointsLeaderboard.sort((a, b) => (b['points'] as num).compareTo(a['points'] as num));
+    return ListView(
+      children: pointsLeaderboard.map((entry) {
+        return ListTile(
+          leading: const Icon(Icons.star), // Added const
+          title: Text(entry['name']?.toString() ?? ''), // Handle potential null name
+          trailing: Text('${entry['points']?.toString() ?? ''} pts'), // Handle potential null points
+        );
+      }).toList(),
+    );
+  }
 
-class _MyLeaderboard extends State<MyLeaderboard> {
-  @override
-  Widget build(BuildContext context) {
-    return DefaultTabController(length: 3, child: 
-            Scaffold(
-              appBar: AppBar(
-                leading: IconButton(onPressed: () {}, icon: Icon(Icons.arrow_back_sharp)),
-                backgroundColor: Colors.green,
-                title: Center(child: Text("Leaderboards")),
-                actions: [
-                  IconButton(onPressed: () {}, icon: Icon(Icons.help)),
-                ],
-              ),
-              bottomNavigationBar: const TabBar(
-                padding: EdgeInsets.only(bottom: 30),
-                indicatorSize: TabBarIndicatorSize.tab,
-                tabs: [
-                  Tab(icon: Icon(Icons.savings_rounded)),
-                  Tab(icon: Icon(Icons.smoke_free)),
-                  Tab(icon: Icon(Icons.lightbulb))
-                ],
-              ),
-            ),
-          );
+  // Helper method to build the CO2 leaderboard table
+  Widget _buildCO2Table() {
+    // Sort in ascending order (lowest CO2 cost is better)
+    co2Leaderboard.sort((a, b) => (a['co2Cost'] as num).compareTo(b['co2Cost'] as num));
+    return ListView(
+      children: co2Leaderboard.map((entry) {
+        return ListTile(
+          leading: const Icon(Icons.eco), // Added const
+          title: Text(entry['name']?.toString() ?? ''), // Handle potential null name
+          // Corrected the key from 'co2Saved' to 'co2Cost'
+          trailing: Text('${entry['co2Cost']?.toString() ?? ''} kg CO₂'), // Handle potential null co2Cost
+        );
+      }).toList(),
+    );
+  }
+
+  // Helper method to build the Cost-Effective leaderboard table
+  Widget _buildCostEffectiveTable() {
+    // Sort in descending order (highest ratio is better)
+    costEffectiveLeaderboard.sort((a, b) => (b['ratio'] as num).compareTo(a['ratio'] as num));
+
+    return ListView(
+      children: costEffectiveLeaderboard.map((entry) {
+        return ListTile(
+          leading: const Icon(Icons.attach_money), // Added const
+          title: Text(entry['name']?.toString() ?? ''), // Handle potential null name
+          subtitle: const Text("Savings-to-spending ratio"), // Added const
+          trailing: Text((entry['ratio'] as num).toStringAsFixed(2)), // Handle potential null ratio
+        );
+      }).toList(),
+    );
   }
 }
