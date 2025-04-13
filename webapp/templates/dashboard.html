@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - {{ customer }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+ <div class="logo-background logo-small">
+     <!-- Ensure logo is in app/static/img/ -->
+     <img src="{{ url_for('static', filename='img/logo.webp') }}" alt="SpendSmart Logo">
+ </div>
+ <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class=flashes>
+        {% for category, message in messages %}
+          <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <div class="dashboard-header">
+        <h1>Welcome, {{ customer }}</h1>
+        <p>Points: <strong>{{ points }}</strong> / 1000</p>
+    </div>
+    <nav class="nav">
+      <a href="{{ url_for('dashboard', view='pending') }}" class="{{ 'active' if view == 'pending' else '' }}">Pending ({{ pending_count }})</a>
+      <a href="{{ url_for('dashboard', view='history') }}" class="{{ 'active' if view == 'history' else '' }}">History ({{ history_count }})</a>
+      <a href="{{ url_for('dashboard', view='all') }}" class="{{ 'active' if view == 'all' else '' }}">All</a>
+      {% if not purchase_data[customer]["pending"] %}
+      <a href="{{ url_for('leaderboard') }}">Leaderboard ✨</a>
+      {% endif %}
+    </nav>
+
+    {% if view in ['pending', 'all'] %}
+      <h2 class="section-title">Pending Purchases ({{ pending_count }})</h2>
+      {% if pending %}
+          <ul class="purchase-list">
+          {% for idx, purchase in pending | enumerate %}
+              <li class="purchase-item" style="animation-delay: {{ loop.index0 * 0.05 }}s">
+                  <div class="item-info">
+                      <div class="item-details">
+                          <span class="date">{{ purchase.get('purchase_date', 'No Date') }}</span>
+                          <strong>{{ purchase.get('description', 'No description') }}</strong> -
+                          <span class="amount">${{ "%.2f"|format(purchase.get('amount', 0)) }}</span>
+                      </div>
+                      <div class="item-actions">
+                           <form method="post" action="{{ url_for('penalize') }}" class="penalty-form">
+                               <input type="hidden" name="purchase_index" value="{{ idx }}">
+                               <button type="submit" class="penalty-button" onclick="return confirm('Take a 100 point hit for this item?');" title="Apply 100pt penalty">Can't Upload</button>
+                           </form>
+                       </div>
+                  </div>
+                  <form method="post" action="{{ url_for('justify') }}" enctype="multipart/form-data" class="justify-form">
+                      <input type="hidden" name="purchase_index" value="{{ idx }}">
+                      <div class="inputs-group">
+                         <input type="file" name="receipt" accept="image/*,.pdf" required title="Select receipt file">
+                         <textarea name="justification" rows="2" required placeholder="Why did you buy this? Be honest..." title="Enter justification"></textarea>
+                      </div>
+                      <button type="submit" title="Upload receipt and justification">Submit & Justify</button>
+                  </form>
+              </li>
+          {% endfor %}
+          </ul>
+      {% else %}
+          <p>🎉 All purchases justified! Well done!</p>
+      {% endif %}
+    {% endif %}
+
+    {% if view in ['history', 'all'] %}
+      <h2 class="section-title">Purchase History ({{ history_count }})</h2>
+      {% if history %}
+          <ul class="purchase-list" id="purchase-history-list">
+          {% for record in history %}
+              <li class="purchase-item" style="animation-delay: {{ loop.index0 * 0.05 + (pending_count * 0.05 if view == 'all' else 0) }}s">
+                 <div class="item-details" style="width: 100%;">
+                      <span class="date">{{ record.purchase.get('purchase_date', 'No Date') }}</span>
+                      <strong>{{ record.purchase.get('description', 'No description') }}</strong> -
+                      <span class="amount">${{ "%.2f"|format(record.purchase.get('amount', 0)) }}</span>
+                      <div class="justification">
+                        Receipt: {% if record.receipt_filename and record.receipt_filename != 'N/A' %}
+                                        <span class="view-receipt-trigger" data-filename="{{ record.receipt_filename }}">{{ record.receipt_filename }}</span>
+                                     {% else %}
+                                        <span style="color: var(--text-light); font-style: italic;">{{ record.receipt_filename | default('N/A') }}</span>
+                                     {% endif %}<br>
+                        Deduction: <span class="deduction-value {{ 'penalty' if record.deduction == 100 else ('zero' if record.deduction == 0 else '') }}">{{ record.deduction }} pts</span><br>
+                        Analysis Reason: <span style="font-style: italic;">{{ record.analysis_reason }}</span><br> {# Renamed from ai_reason #}
+                        {% if record.justification and record.justification != 'N/A' %}
+                            <span class="user-justification"><strong>Your Justification:</strong> {{ record.justification }}</span>
+                        {% endif %}
+                      </div>
+                  </div>
+              </li>
+          {% endfor %}
+          </ul>
+      {% else %}
+          <p>No purchase history recorded yet.</p>
+      {% endif %}
+    {% endif %}
+
+    <a href="{{ url_for('logout') }}" class="logout-link">Log Out</a>
+
+    <div id="receipt-viewer-area"></div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const viewerArea = document.getElementById('receipt-viewer-area');
+        const historyList = document.getElementById('purchase-history-list');
+        if (historyList) {
+          historyList.addEventListener('click', (event) => {
+            if (event.target && event.target.classList.contains('view-receipt-trigger')) {
+              const filename = event.target.dataset.filename; if (!filename) return;
+              viewerArea.innerHTML = '';
+              viewerArea.classList.add('active');
+              const popup = document.createElement('div'); popup.classList.add('receipt-popup');
+              const header = document.createElement('div'); header.classList.add('receipt-header'); header.textContent = filename;
+              const closeButton = document.createElement('button'); closeButton.classList.add('close-receipt');
+              closeButton.innerHTML = '×';
+              closeButton.onclick = (e) => { e.stopPropagation(); viewerArea.classList.remove('active'); viewerArea.innerHTML=''; };
+              const img = document.createElement('img');
+              img.src = '/receipts/' + filename; // Use the correct route
+              img.alt = 'Receipt: ' + filename;
+              img.onerror = () => { popup.innerHTML = '<p style=\"padding: 1em; color: var(--danger-red);\">Error loading image.</p>'; popup.prepend(header); popup.prepend(closeButton); };
+              popup.appendChild(header); popup.appendChild(closeButton); popup.appendChild(img);
+              viewerArea.appendChild(popup);
+            }
+          });
+        }
+        viewerArea.addEventListener('click', (event) => {
+             if (event.target === viewerArea) {
+                 viewerArea.classList.remove('active');
+                 viewerArea.innerHTML = '';
+             }
+        });
+      });
+    </script>
+ </div>
+</body>
+</html>
