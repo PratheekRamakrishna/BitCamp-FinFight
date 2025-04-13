@@ -53,6 +53,14 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(onPressed: () {
+            Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Tutorial())
+            );
+          }, icon: Icon(Icons.help)),
+        ],
         leading: Icon(Icons.monetization_on),
         title: Center(
           child: Text(widget.title, 
@@ -64,14 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         backgroundColor: Colors.green,
-        actions: [
-          IconButton(onPressed: () {
-            Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => Tutorial())
-            );
-          }, icon: Icon(Icons.help)),
-        ],
+        
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(8.0),
@@ -264,8 +265,8 @@ class _InvitePeople extends State<InvitePeople> {
           }, icon: Icon(Icons.help)),
         ],
         title: Center(
-          child: Text("Justify Purchases", 
-            style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black)),
+          child: Text("Invite your Friends!", 
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(color: Colors.black)),
             
         ),
         backgroundColor: Colors.green,
@@ -307,7 +308,11 @@ class _InvitePeople extends State<InvitePeople> {
               icon: Icon(Icons.email_sharp, size: 36),
               label: Text(
                 "Send Email",
-                style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black)
+                style: GoogleFonts.merriweatherSans(
+                  textStyle: TextStyle(
+                    fontSize: 30,
+                  ),
+                ),
                 ),
               onPressed: _invitePerson,
             ),
@@ -326,12 +331,82 @@ class MyLeaderboard extends StatefulWidget {
 }
 
 class _MyLeaderboard extends State<MyLeaderboard> {
+
+  final List<Map<String, dynamic>> co2Leaderboard = [
+    {'name': 'Dave', 'co2Cost': 50}, // Key is 'co2Cost'
+    {'name': 'Eve', 'co2Cost': 100},
+    {'name': 'Frank', 'co2Cost': 200},
+    {'name': 'Grace', 'co2Cost': 20}, // Key is 'co2Cost'
+    {'name': 'Heidi', 'co2Cost': 300},
+    {'name': 'Ivan', 'co2Cost': 170},
+  ];
+   // Helper method to build the Points leaderboard table
+final List<Map<String, dynamic>> pointsLeaderboard = [
+    {'name': 'Dave', 'points': 100},
+    {'name': 'Eve', 'points': 400},
+    {'name': 'Frank', 'points': 200},
+    {'name': 'Grace', 'points': 300},
+    {'name': 'Heidi', 'points': 250},
+    {'name': 'Ivan', 'points': 350},
+  ];
+
+  final List<Map<String, dynamic>> costEffectiveLeaderboard = [
+    {'name': 'Dave', 'ratio': 1.5},
+    {'name': 'Eve', 'ratio': .92},
+    {'name': 'Frank', 'ratio': .88},
+    {'name': 'Grace', 'ratio': .55},
+    {'name': 'Ivan', 'ratio': 2.2},
+    {'name': 'Heidi', 'ratio': 3.8},
+  ];
+
+  Widget _buildPointsTable() {
+    // Sort in descending order (highest points first)
+    pointsLeaderboard.sort((a, b) => (b['points'] as num).compareTo(a['points'] as num));
+    return ListView(
+      children: pointsLeaderboard.map((entry) {
+        return ListTile(
+          leading: const Icon(Icons.star), // Added const
+          title: Text(entry['name']?.toString() ?? ''), // Handle potential null name
+          trailing: Text('${entry['points']?.toString() ?? ''} pts'), // Handle potential null points
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildCO2Table() {
+    // Sort in ascending order (lowest CO2 cost is better)
+    co2Leaderboard.sort((a, b) => (a['co2Cost'] as num).compareTo(b['co2Cost'] as num));
+    return ListView(
+      children: co2Leaderboard.map((entry) {
+        return ListTile(
+          leading: const Icon(Icons.eco), // Added const
+          title: Text(entry['name']?.toString() ?? ''), // Handle potential null name
+          // Corrected the key from 'co2Saved' to 'co2Cost'
+          trailing: Text('${entry['co2Cost']?.toString() ?? ''} kg CO₂'), // Handle potential null co2Cost
+        );
+      }).toList(),
+    );
+  }
+
+Widget _buildCostEffectiveTable() {
+    costEffectiveLeaderboard.sort((a, b) => (b['ratio'] as num).compareTo(a['ratio'] as num));
+    return ListView(
+      children: costEffectiveLeaderboard.map((entry) {
+        return ListTile(
+          leading: const Icon(Icons.attach_money), // Added const
+          title: Text(entry['name']?.toString() ?? ''), // Handle potential null name
+          subtitle: const Text("Walmart Price Ratio"), // Added const
+          trailing: Text((entry['ratio'] as num).toStringAsFixed(2)), // Handle potential null ratio
+        );
+      }).toList(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(length: 3, child: 
             Scaffold(
               appBar: AppBar(
-                
                 leading: IconButton(onPressed: () {
                   Navigator.pop(context);
                 }, icon: Icon(Icons.arrow_back_sharp)),
@@ -351,12 +426,19 @@ class _MyLeaderboard extends State<MyLeaderboard> {
                 indicatorSize: TabBarIndicatorSize.tab,
                 tabs: [
                   Tab(icon: Icon(Icons.savings_sharp)),
-                  Tab(icon: Icon(Icons.smoke_free_sharp)),
+                  Tab(icon: Icon(Icons.eco_sharp)),
                   Tab(icon: Icon(Icons.lightbulb_sharp))
                 ],
               ),
-            ),
-          );
+              body: TabBarView(
+                children: [
+                _buildPointsTable(),
+                _buildCO2Table(),
+                _buildCostEffectiveTable(),
+              ],
+          ),
+      ),
+    );
   }
 }
 
@@ -429,6 +511,14 @@ class _JustifyPurchase extends State<JustifyPurchase> {
       appBar: AppBar(
         title: const Center(child: Text("Justify Purchases")),
         backgroundColor: Colors.green,
+        actions: [
+          IconButton(onPressed: () {
+            Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Tutorial())
+            );
+          }, icon: Icon(Icons.help)),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -547,7 +637,15 @@ class _Tutorial extends State<Tutorial> {
           title: Center(
             child: Text("FinFig", 
               style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black)),
-            )
+            ),
+            actions: [
+              IconButton(onPressed: () {
+                Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Tutorial())
+                );
+              }, icon: Icon(Icons.help)),
+            ],
           ),
           body: Padding(
           padding: EdgeInsets.all(32),
@@ -603,7 +701,7 @@ class _Tutorial extends State<Tutorial> {
             ),
             const SizedBox(height: 16),
             ListTile(
-              leading: Icon(Icons.smoke_free_sharp),
+              leading: Icon(Icons.eco_sharp),
               title: Text("Reduce your carbon emissions! The products you purchase all leave a carbon footprint.",
                 style: GoogleFonts.merriweatherSans(
                   textStyle: TextStyle(
