@@ -83,8 +83,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             ..._leaderboard.map((entry) => ListTile(
               leading: const Icon(Icons.person),
-              title: Text(entry['name'], style: TextStyle(
-                fontSize: 20
+              title: Text(entry['name'], style: GoogleFonts.merriweatherSans(
+              textStyle: TextStyle(
+                fontSize: 20,
+              ),
               )),
             )),
             const SizedBox(height: 24),
@@ -138,13 +140,17 @@ class InviteTransition extends StatelessWidget {
             borderRadius: BorderRadius.zero,
           ), 
         ),
-        backgroundColor: WidgetStatePropertyAll(Colors.blue)
+        backgroundColor: WidgetStatePropertyAll(Colors.orange)
         ),
       icon: Icon(Icons.add, size: 36),
       label: Text(
         "Invite your Friends",
-        style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black)
+        style: GoogleFonts.merriweatherSans(
+              textStyle: TextStyle(
+                fontSize: 30,
+              ),
         ),
+      ),
       onPressed: () {
         Navigator.push(
         context,
@@ -175,8 +181,12 @@ class LeaderboardTransition extends StatelessWidget {
       icon: Icon(Icons.emoji_events, size: 36),
       label: Text(
         "See Leaderboards",
-        style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black)
+        style: GoogleFonts.merriweatherSans(
+              textStyle: TextStyle(
+                fontSize: 30,
+              ),
         ),
+      ),
       onPressed: () {
         Navigator.push(
         context,
@@ -207,8 +217,12 @@ class JustifyTransition extends StatelessWidget {
       icon: Icon(Icons.edit_note, size: 36),
       label: Text(
         "Justify Purchases",
-        style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black)
+        style: GoogleFonts.merriweatherSans(
+              textStyle: TextStyle(
+                fontSize: 30,
+          ),
         ),
+      ),
       onPressed: () {
         Navigator.push(
         context,
